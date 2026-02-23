@@ -17,6 +17,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div className="platform-root">
+          <div className="app-atmosphere" aria-hidden="true">
+            <span className="app-atmosphere__blob app-atmosphere__blob--one" />
+            <span className="app-atmosphere__blob app-atmosphere__blob--two" />
+            <span className="app-atmosphere__blob app-atmosphere__blob--three" />
+          </div>
           <TopNav />
           <div className="platform-content">{children}</div>
         </div>

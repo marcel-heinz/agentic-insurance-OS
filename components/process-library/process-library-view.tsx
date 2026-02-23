@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { valueChainOrder } from "@/lib/mock-data";
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
+import { valueChainAccent, valueChainOrder } from "@/lib/mock-data";
 import { listStoredProcesses, removeStoredProcessById } from "@/lib/storage";
 import type { StoredProcess, ValueChain } from "@/lib/types";
 
@@ -40,9 +40,23 @@ export function ProcessLibraryView() {
     return map;
   }, [processes]);
 
+  const libraryStats = useMemo(() => {
+    const totalNodes = processes.reduce((sum, process) => sum + process.nodeCount, 0);
+    const totalConnections = processes.reduce(
+      (sum, process) => sum + process.edgeCount,
+      0
+    );
+
+    return {
+      processCount: processes.length,
+      totalNodes,
+      totalConnections
+    };
+  }, [processes]);
+
   return (
     <main className="page-shell">
-      <section className="library-hero">
+      <section className="library-hero card-surface">
         <p className="page-eyebrow">Process Library</p>
         <h1 className="page-title">Saved flows grouped by insurance value chain.</h1>
         <p className="page-copy">
@@ -55,6 +69,20 @@ export function ProcessLibraryView() {
           <button type="button" className="btn btn--ghost" onClick={loadProcesses}>
             Refresh
           </button>
+        </div>
+        <div className="hero-kpis">
+          <div className="hero-kpi">
+            <span className="hero-kpi__value">{libraryStats.processCount}</span>
+            <span className="hero-kpi__label">Saved processes</span>
+          </div>
+          <div className="hero-kpi">
+            <span className="hero-kpi__value">{libraryStats.totalNodes}</span>
+            <span className="hero-kpi__label">Total nodes</span>
+          </div>
+          <div className="hero-kpi">
+            <span className="hero-kpi__value">{libraryStats.totalConnections}</span>
+            <span className="hero-kpi__label">Total connections</span>
+          </div>
         </div>
       </section>
 
@@ -87,7 +115,15 @@ export function ProcessLibraryView() {
 
               <div className="library-cards">
                 {items.map((process) => (
-                  <article key={process.id} className="library-card">
+                  <article
+                    key={process.id}
+                    className="library-card"
+                    style={
+                      {
+                        "--library-accent": valueChainAccent[valueChain]
+                      } as CSSProperties
+                    }
+                  >
                     <h3>{process.name}</h3>
                     <p>
                       v{process.version} | {process.nodeCount} nodes | {process.edgeCount}{" "}

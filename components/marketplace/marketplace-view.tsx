@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import {
   agentCatalog,
@@ -54,6 +54,17 @@ export function MarketplaceView() {
     });
   }, [activeStatus, activeValueChain, searchTerm]);
 
+  const marketplaceStats = useMemo(() => {
+    const totalAgents = agentCatalog.length;
+    const verifiedAgents = agentCatalog.filter(
+      (agent) => agent.status === "Verified"
+    ).length;
+    const chainCoverage = new Set(agentCatalog.flatMap((agent) => agent.valueChains))
+      .size;
+
+    return { totalAgents, verifiedAgents, chainCoverage };
+  }, []);
+
   const handleAddToBuilder = (agent: AgentCatalogItem) => {
     queueMarketplaceAgent(agent.id);
     setNotice(`Queued \"${agent.name}\" for the Process Builder.`);
@@ -61,7 +72,7 @@ export function MarketplaceView() {
 
   return (
     <main className="page-shell">
-      <section className="market-hero">
+      <section className="market-hero card-surface">
         <p className="page-eyebrow">Agent Marketplace</p>
         <h1 className="page-title">Insurance worker catalog for your value chain.</h1>
         <p className="page-copy">
@@ -75,6 +86,20 @@ export function MarketplaceView() {
           <Link href="/process-library" className="btn btn--ghost">
             Process Library
           </Link>
+        </div>
+        <div className="hero-kpis">
+          <div className="hero-kpi">
+            <span className="hero-kpi__value">{marketplaceStats.totalAgents}</span>
+            <span className="hero-kpi__label">Agents in catalog</span>
+          </div>
+          <div className="hero-kpi">
+            <span className="hero-kpi__value">{marketplaceStats.verifiedAgents}</span>
+            <span className="hero-kpi__label">Verified workers</span>
+          </div>
+          <div className="hero-kpi">
+            <span className="hero-kpi__value">{marketplaceStats.chainCoverage}</span>
+            <span className="hero-kpi__label">Value chains covered</span>
+          </div>
         </div>
       </section>
 
@@ -119,9 +144,21 @@ export function MarketplaceView() {
 
           {notice ? <p className="inline-notice">{notice}</p> : null}
 
+          <p className="results-line">
+            Showing {filteredAgents.length} of {agentCatalog.length} agent cards
+          </p>
+
           <div className="agent-grid">
             {filteredAgents.map((agent) => (
-              <article key={agent.id} className="agent-card">
+              <article
+                key={agent.id}
+                className="agent-card"
+                style={
+                  {
+                    "--agent-accent": valueChainAccent[agent.valueChains[0]]
+                  } as CSSProperties
+                }
+              >
                 <div className="agent-card__meta">
                   <span className={`status-tag status-tag--${agent.status.toLowerCase()}`}>
                     {agent.status}
@@ -151,6 +188,11 @@ export function MarketplaceView() {
                   ))}
                 </div>
 
+                <div className="agent-card__metrics">
+                  <span>{agent.requiredConnectors.length} connectors</span>
+                  <span>{agent.outputs.length} outputs</span>
+                </div>
+
                 <div className="agent-card__actions">
                   <button
                     type="button"
@@ -170,6 +212,13 @@ export function MarketplaceView() {
               </article>
             ))}
           </div>
+
+          {filteredAgents.length === 0 ? (
+            <section className="empty-search card-surface">
+              <h2>No agents match this filter</h2>
+              <p>Try widening value-chain or status filters to explore more workers.</p>
+            </section>
+          ) : null}
         </div>
 
         <aside className="market-side card-surface">

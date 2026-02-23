@@ -16,7 +16,11 @@ export function TopNav() {
     <header className="top-nav">
       <div className="top-nav__inner">
         <Link href="/marketplace" className="top-nav__brand">
-          Agentic Insurance OS
+          <span className="top-nav__brand-mark">AI</span>
+          <span className="top-nav__brand-copy">
+            <span className="top-nav__brand-title">Agentic Insurance OS</span>
+            <span className="top-nav__brand-subtitle">Marketplace + Process Studio</span>
+          </span>
         </Link>
 
         <nav className="top-nav__links" aria-label="Primary">

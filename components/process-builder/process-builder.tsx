@@ -530,209 +530,238 @@ function BuilderWorkbench() {
   };
 
   return (
-    <main className="builder-layout">
-      <aside className="builder-pane">
-        <p className="pane-eyebrow">Palette</p>
-        <h1 className="pane-title">Process Blocks</h1>
-        <p className="pane-copy">
-          Drag from agents, connectors, and logic controls into the canvas.
-        </p>
-
-        <div className="palette-tabs" role="tablist" aria-label="Palette tabs">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === "agents"}
-            className={`palette-tab ${activeTab === "agents" ? "is-active" : ""}`}
-            onClick={() => setActiveTab("agents")}
-          >
-            Agents
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === "data"}
-            className={`palette-tab ${activeTab === "data" ? "is-active" : ""}`}
-            onClick={() => setActiveTab("data")}
-          >
-            Data Sources
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === "logic"}
-            className={`palette-tab ${activeTab === "logic" ? "is-active" : ""}`}
-            onClick={() => setActiveTab("logic")}
-          >
-            Logic
-          </button>
+    <main className="builder-workspace">
+      <section className="builder-hero card-surface">
+        <div>
+          <p className="page-eyebrow">Process Studio</p>
+          <h1 className="page-title">Compose autonomous insurance flows visually.</h1>
+          <p className="page-copy">
+            Build reusable processes from agents, data connectors, and logic controls.
+            Version each flow and route it by value chain.
+          </p>
         </div>
-
-        <div className="palette-list">
-          {templatesByTab[activeTab].map((template) => (
-            <button
-              key={template.templateId}
-              type="button"
-              draggable
-              onDragStart={(event) => handleTemplateDragStart(event, template)}
-              className={`palette-card palette-card--${template.kind}`}
-            >
-              <span className="palette-card__title">{template.label}</span>
-              <span className="palette-card__subtitle">{template.subtitle}</span>
-              <span className="palette-card__meta">{template.tags.join(" | ")}</span>
-            </button>
-          ))}
+        <div className="builder-hero__stats">
+          <div className="builder-stat">
+            <span className="builder-stat__value">{nodes.length}</span>
+            <span className="builder-stat__label">Nodes</span>
+          </div>
+          <div className="builder-stat">
+            <span className="builder-stat__value">{edges.length}</span>
+            <span className="builder-stat__label">Connections</span>
+          </div>
+          <div className="builder-stat">
+            <span className="builder-stat__value">v{version}</span>
+            <span className="builder-stat__label">Version</span>
+          </div>
         </div>
-      </aside>
-
-      <section className="builder-canvas-surface">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          onNodeClick={(_, node) => setSelectedNodeId(node.id)}
-          onPaneClick={() => setSelectedNodeId(null)}
-          nodeTypes={nodeTypes}
-          fitView
-          fitViewOptions={{ padding: 0.2 }}
-          proOptions={{ hideAttribution: true }}
-          defaultEdgeOptions={{
-            type: "smoothstep",
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              color: edgeColor
-            },
-            style: {
-              stroke: edgeColor,
-              strokeWidth: 1.8
-            }
-          }}
-        >
-          <Background color="#CAD3DE" gap={20} size={1.1} />
-          <MiniMap
-            pannable
-            zoomable
-            nodeBorderRadius={10}
-            nodeColor={(node) => ((node.data as ProcessNodeData | undefined)?.accent ?? "#7F90AA")}
-            maskColor="rgba(244, 242, 236, 0.7)"
-          />
-          <Controls showInteractive={false} position="bottom-right" />
-        </ReactFlow>
       </section>
 
-      <aside className="builder-pane">
-        <p className="pane-eyebrow">Configuration</p>
-        <h2 className="pane-title pane-title--small">Process</h2>
+      <section className="builder-layout">
+        <aside className="builder-pane builder-pane--palette">
+          <p className="pane-eyebrow">Palette</p>
+          <h2 className="pane-title">Process Blocks</h2>
+          <p className="pane-copy">
+            Drag from agents, connectors, and logic controls into the canvas.
+          </p>
 
-        <label className="form-label">
-          Process name
-          <input
-            type="text"
-            className="text-input"
-            value={processName}
-            onChange={(event) => setProcessName(event.target.value)}
-          />
-        </label>
+          <div className="palette-tabs" role="tablist" aria-label="Palette tabs">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "agents"}
+              className={`palette-tab ${activeTab === "agents" ? "is-active" : ""}`}
+              onClick={() => setActiveTab("agents")}
+            >
+              Agents
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "data"}
+              className={`palette-tab ${activeTab === "data" ? "is-active" : ""}`}
+              onClick={() => setActiveTab("data")}
+            >
+              Data Sources
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "logic"}
+              className={`palette-tab ${activeTab === "logic" ? "is-active" : ""}`}
+              onClick={() => setActiveTab("logic")}
+            >
+              Logic
+            </button>
+          </div>
 
-        <label className="form-label">
-          Value chain
-          <select
-            className="select-input"
-            value={valueChain}
-            onChange={(event) => setValueChain(event.target.value as ValueChain)}
-          >
-            {valueChainOrder.map((chain) => (
-              <option key={chain} value={chain}>
-                {chain}
-              </option>
+          <div className="palette-list">
+            {templatesByTab[activeTab].map((template) => (
+              <button
+                key={template.templateId}
+                type="button"
+                draggable
+                onDragStart={(event) => handleTemplateDragStart(event, template)}
+                className={`palette-card palette-card--${template.kind}`}
+              >
+                <span className="palette-card__title">{template.label}</span>
+                <span className="palette-card__subtitle">{template.subtitle}</span>
+                <span className="palette-card__meta">{template.tags.join(" | ")}</span>
+              </button>
             ))}
-          </select>
-        </label>
+          </div>
+        </aside>
 
-        <div className="stats-row">
-          <span>{nodes.length} nodes</span>
-          <span>{edges.length} connections</span>
-          <span>v{version}</span>
-        </div>
+        <section className="builder-canvas-surface">
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            onNodeClick={(_, node) => setSelectedNodeId(node.id)}
+            onPaneClick={() => setSelectedNodeId(null)}
+            nodeTypes={nodeTypes}
+            fitView
+            fitViewOptions={{ padding: 0.2 }}
+            proOptions={{ hideAttribution: true }}
+            defaultEdgeOptions={{
+              type: "smoothstep",
+              markerEnd: {
+                type: MarkerType.ArrowClosed,
+                color: edgeColor
+              },
+              style: {
+                stroke: edgeColor,
+                strokeWidth: 1.8
+              }
+            }}
+          >
+            <Background color="#CAD3DE" gap={20} size={1.1} />
+            <MiniMap
+              pannable
+              zoomable
+              nodeBorderRadius={10}
+              nodeColor={(node) =>
+                ((node.data as ProcessNodeData | undefined)?.accent ?? "#7F90AA")
+              }
+              maskColor="rgba(244, 242, 236, 0.7)"
+            />
+            <Controls showInteractive={false} position="bottom-right" />
+          </ReactFlow>
+        </section>
 
-        <div className="builder-actions">
-          <button type="button" className="btn btn--primary" onClick={handleSaveProcess}>
-            Save Process
-          </button>
-          <button type="button" className="btn btn--ghost" onClick={handleResetToBrokerTemplate}>
-            Reset Broker Template
-          </button>
-          <Link href="/process-library" className="btn btn--ghost">
-            Open Library
-          </Link>
-        </div>
+        <aside className="builder-pane builder-pane--config">
+          <p className="pane-eyebrow">Configuration</p>
+          <h2 className="pane-title pane-title--small">Process</h2>
 
-        {saveNotice ? <p className="inline-notice">{saveNotice}</p> : null}
+          <label className="form-label">
+            Process name
+            <input
+              type="text"
+              className="text-input"
+              value={processName}
+              onChange={(event) => setProcessName(event.target.value)}
+            />
+          </label>
 
-        <h2 className="pane-title pane-title--small">Selected node</h2>
+          <label className="form-label">
+            Value chain
+            <select
+              className="select-input"
+              value={valueChain}
+              onChange={(event) => setValueChain(event.target.value as ValueChain)}
+            >
+              {valueChainOrder.map((chain) => (
+                <option key={chain} value={chain}>
+                  {chain}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        {selectedNode ? (
-          <div className="node-editor">
-            <label className="form-label">
-              Label
-              <input
-                type="text"
-                className="text-input"
-                value={selectedNode.data.label}
-                onChange={(event) => updateSelectedNode({ label: event.target.value })}
-              />
-            </label>
+          <div className="stats-row">
+            <span>{nodes.length} nodes</span>
+            <span>{edges.length} connections</span>
+            <span>v{version}</span>
+          </div>
 
-            <label className="form-label">
-              Subtitle
-              <input
-                type="text"
-                className="text-input"
-                value={selectedNode.data.subtitle}
-                onChange={(event) => updateSelectedNode({ subtitle: event.target.value })}
-              />
-            </label>
+          <div className="builder-actions">
+            <button type="button" className="btn btn--primary" onClick={handleSaveProcess}>
+              Save Process
+            </button>
+            <button type="button" className="btn btn--ghost" onClick={handleResetToBrokerTemplate}>
+              Reset Broker Template
+            </button>
+            <Link href="/process-library" className="btn btn--ghost">
+              Open Library
+            </Link>
+          </div>
 
-            <label className="form-label">
-              Tags
-              <input
-                type="text"
-                className="text-input"
-                value={selectedNode.data.tags.join(", ")}
-                onChange={(event) =>
-                  updateSelectedNode({ tags: parseCommaSeparated(event.target.value) })
-                }
-              />
-            </label>
+          {saveNotice ? <p className="inline-notice">{saveNotice}</p> : null}
 
-            {selectedNode.data.kind === "logic" ? (
+          <h2 className="pane-title pane-title--small">Selected node</h2>
+
+          {selectedNode ? (
+            <div className="node-editor">
               <label className="form-label">
-                Branch labels
+                Label
                 <input
                   type="text"
                   className="text-input"
-                  value={(selectedNode.data.branchLabels ?? []).join(", ")}
+                  value={selectedNode.data.label}
+                  onChange={(event) => updateSelectedNode({ label: event.target.value })}
+                />
+              </label>
+
+              <label className="form-label">
+                Subtitle
+                <input
+                  type="text"
+                  className="text-input"
+                  value={selectedNode.data.subtitle}
+                  onChange={(event) => updateSelectedNode({ subtitle: event.target.value })}
+                />
+              </label>
+
+              <label className="form-label">
+                Tags
+                <input
+                  type="text"
+                  className="text-input"
+                  value={selectedNode.data.tags.join(", ")}
                   onChange={(event) =>
-                    updateSelectedNode({
-                      branchLabels: parseCommaSeparated(event.target.value)
-                    })
+                    updateSelectedNode({ tags: parseCommaSeparated(event.target.value) })
                   }
                 />
               </label>
-            ) : null}
 
-            <button type="button" className="btn btn--ghost" onClick={handleDeleteSelected}>
-              Delete Node
-            </button>
-          </div>
-        ) : (
-          <p className="pane-copy">Select a node on the canvas to edit its metadata.</p>
-        )}
-      </aside>
+              {selectedNode.data.kind === "logic" ? (
+                <label className="form-label">
+                  Branch labels
+                  <input
+                    type="text"
+                    className="text-input"
+                    value={(selectedNode.data.branchLabels ?? []).join(", ")}
+                    onChange={(event) =>
+                      updateSelectedNode({
+                        branchLabels: parseCommaSeparated(event.target.value)
+                      })
+                    }
+                  />
+                </label>
+              ) : null}
+
+              <button type="button" className="btn btn--ghost" onClick={handleDeleteSelected}>
+                Delete Node
+              </button>
+            </div>
+          ) : (
+            <p className="pane-copy">Select a node on the canvas to edit its metadata.</p>
+          )}
+        </aside>
+      </section>
     </main>
   );
 }
