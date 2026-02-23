@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "@xyflow/react/dist/style.css";
+import { TopNav } from "@/components/layout/top-nav";
 
 export const metadata: Metadata = {
-  title: "Process Builder",
-  description: "Lean drag-and-drop process designer"
+  title: "Agentic Insurance OS",
+  description: "Marketplace and process builder for insurance agents"
 };
 
 export default function RootLayout({
@@ -14,7 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <div className="platform-root">
+          <TopNav />
+          <div className="platform-content">{children}</div>
+        </div>
+      </body>
     </html>
   );
 }

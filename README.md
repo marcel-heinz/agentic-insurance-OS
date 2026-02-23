@@ -1,19 +1,20 @@
-# Process Builder (Next.js)
+# Agentic Insurance OS (Frontend MVP)
 
-Lean drag-and-drop process editor built with Next.js + React Flow.
+Next.js frontend MVP for an insurance-agent marketplace plus a drag-and-drop process builder.
 
-## Why this structure
+## Pages
 
-- **React Flow** handles node movement, zoom/pan, and edge connections reliably.
-- **Palette + canvas split** keeps the UI focused: choose a block, drop it, connect only when needed.
-- **Minimal node model** (`label`, `caption`, `variant`) makes it easy to extend node types later.
+- `/marketplace`: Browse insurance agents, filter by value chain/status, inspect details, and queue agents for the builder.
+- `/builder`: Build flows by dragging `Agents`, `Data Sources`, and `Logic` blocks onto a canvas and connecting them.
+- `/process-library`: View locally saved processes grouped by value chain and reopen them in the builder.
 
-## Features
+## MVP capabilities
 
-- Drag node templates (`Start`, `Task`, `Decision`, `End`) onto a canvas.
-- Connect nodes using top/bottom handles.
-- Move, pan, zoom, and inspect the flow with controls + minimap.
-- Responsive layout for desktop and mobile.
+- Catalog of mocked insurance agents (ingestion, settlement, underwriting, etc.).
+- Connector catalog (Gmail, S3, APIs, databases, policy core, payments).
+- React Flow canvas with custom nodes, branching labels, and connections.
+- Right-side node/process configuration panel.
+- Local save/load via `localStorage` (no backend business logic).
 
 ## Run
 

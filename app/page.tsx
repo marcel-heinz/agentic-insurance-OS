@@ -1,9 +1,5 @@
-import { ProcessBuilder } from "@/components/process-builder/process-builder";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-    <main>
-      <ProcessBuilder />
-    </main>
-  );
+  redirect("/marketplace");
 }
