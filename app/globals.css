@@ -1,0 +1,247 @@
+:root {
+  --bg-shell: #ebe8e1;
+  --bg-panel: #f9f8f4;
+  --bg-canvas: #f4f1ea;
+  --border-soft: #d2d6ce;
+  --ink-main: #21252d;
+  --ink-muted: #5e6774;
+  --accent-start: #2f8a5b;
+  --accent-task: #3e6f99;
+  --accent-decision: #9a6c2d;
+  --accent-end: #824054;
+  --surface-shadow: 0 16px 36px rgba(36, 46, 61, 0.1);
+  --font-display: "Sora", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+main {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink-main);
+  background:
+    radial-gradient(circle at 14% 18%, rgba(94, 114, 139, 0.16), transparent 36%),
+    radial-gradient(circle at 92% 78%, rgba(119, 91, 64, 0.14), transparent 32%),
+    var(--bg-shell);
+}
+
+main {
+  min-height: 100vh;
+}
+
+.builder-shell {
+  display: grid;
+  grid-template-columns: 272px 1fr;
+  gap: 16px;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.builder-panel {
+  padding: 22px 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 22px;
+  background: linear-gradient(170deg, var(--bg-panel), #f1ede7 88%);
+  box-shadow: var(--surface-shadow);
+}
+
+.panel-eyebrow {
+  margin: 0;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+}
+
+.panel-title {
+  margin: 8px 0 10px;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.panel-copy {
+  margin: 0 0 18px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--ink-muted);
+}
+
+.template-list {
+  display: grid;
+  gap: 10px;
+}
+
+.template-card {
+  text-align: left;
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid transparent;
+  background: #fffefb;
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  gap: 4px;
+  cursor: grab;
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.template-card:active {
+  cursor: grabbing;
+}
+
+.template-card:hover {
+  transform: translateY(-1px);
+  border-color: #b8c0cd;
+  box-shadow: 0 8px 20px rgba(35, 45, 56, 0.1);
+}
+
+.template-card__title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--ink-main);
+}
+
+.template-card__caption {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+.template-card--start {
+  border-left-color: var(--accent-start);
+}
+
+.template-card--task {
+  border-left-color: var(--accent-task);
+}
+
+.template-card--decision {
+  border-left-color: var(--accent-decision);
+}
+
+.template-card--end {
+  border-left-color: var(--accent-end);
+}
+
+.builder-canvas {
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--surface-shadow);
+}
+
+.builder-canvas .react-flow {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.46), transparent 52%),
+    var(--bg-canvas);
+}
+
+.process-node {
+  min-width: 180px;
+  border: 1px solid #cfd3dc;
+  border-left: 5px solid var(--node-accent);
+  background: #fffdfa;
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 20px rgba(26, 32, 43, 0.08);
+}
+
+.process-node.is-selected {
+  box-shadow: 0 12px 26px rgba(26, 32, 43, 0.2);
+  transform: translateY(-1px);
+}
+
+.process-node__title {
+  font-family: var(--font-display);
+  font-size: 0.93rem;
+}
+
+.process-node__caption {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
+.process-node--start {
+  --node-accent: var(--accent-start);
+}
+
+.process-node--task {
+  --node-accent: var(--accent-task);
+}
+
+.process-node--decision {
+  --node-accent: var(--accent-decision);
+}
+
+.process-node--end {
+  --node-accent: var(--accent-end);
+}
+
+.process-handle {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid #faf9f5;
+  background: #4d5c73;
+}
+
+.react-flow__controls {
+  box-shadow: none;
+  border: 1px solid #cfd4dc;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  background: #fffdf8;
+  border-bottom: 1px solid #d8dce4;
+}
+
+.react-flow__controls-button:last-child {
+  border-bottom: none;
+}
+
+.react-flow__minimap {
+  border-radius: 12px;
+  border: 1px solid #d2d8e2;
+  background: rgba(255, 254, 250, 0.86);
+}
+
+@media (max-width: 960px) {
+  .builder-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+    padding: 10px;
+  }
+
+  .builder-panel {
+    padding: 16px;
+  }
+
+  .template-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .builder-canvas {
+    min-height: 68vh;
+  }
+}
+
+@media (max-width: 620px) {
+  .template-list {
+    grid-template-columns: 1fr;
+  }
+}
