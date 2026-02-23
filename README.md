@@ -1,150 +1,111 @@
-# Agentic Insurance OS
+# GenTech Insurance OS
 
-Agentic Insurance OS is a platform to design, connect, and operate insurance-specific AI workers across the full insurance value chain.
+GenTech Insurance OS is building the operating system for insurance work.
 
-Instead of hardcoding brittle workflows, teams compose reusable agents (ingestion, underwriting, settlement, compliance, payments, etc.) into production processes using a visual process graph.
+The long-term vision is broad: a governed platform where insurers, MGAs, brokers, and partners can compose specialized AI workers into production processes.
 
-## Vision
+The go-to-market wedge is narrow and deliberate:
+**Submission Underwriting Intake OS**.
 
-Build the operating system for insurance work.
+We start where insurers feel the pain every day: broker email intake, document chaos, missing-data loops, and slow handoffs to underwriters.
 
-Our long-term vision is a marketplace plus orchestration platform where insurers, MGAs, brokers, TPAs, and startups can:
+## Product Vision
 
-- publish and discover specialized insurance agents,
-- connect those agents to real enterprise systems,
-- compose them into reliable end-to-end processes,
-- govern and monitor outcomes with clear operational controls.
+Insurance teams should not need to rebuild brittle workflow automations for every product line.
 
-The goal is not a single "all-knowing" model. The goal is a coordinated network of purpose-built workers that each own a clear task and can be upgraded independently.
+GenTech Insurance OS aims to become a platform with four durable layers:
 
-## What We Aim To Do
+1. **Execution Layer**
+A governed runtime for insurance agents and workers.
 
-1. Productize insurance work as modular agents
-Create a standard way to package tasks like OCR intake, policy checks, fraud signals, claims triage, settlement, and payments.
+2. **Process Layer**
+A visual process graph for composing intake, validation, routing, and handoff logic.
 
-2. Turn process design into composition, not coding
-Allow teams to drag, connect, branch, and iterate workflows in a process builder without rebuilding integrations from scratch each time.
+3. **Connector Layer**
+Reusable integrations to mailboxes, storage, policy/AMS systems, rules engines, and downstream workbenches.
 
-3. Make connectivity first-class
-Every agent should be connectable to systems like Gmail, S3, policy admin, claims platforms, payment rails, data warehouses, and APIs.
+4. **Marketplace Layer**
+A catalog of reusable, domain-specific workers and process modules.
 
-4. Map automation to the insurance value chain
-Processes are grouped by real business domains: Sales, Underwriting, Claims, Policy Admin, Finance/Payments, Compliance.
+## Why We Start with Submission Intake
 
-5. Enable safe autonomy
-Decisions, routing logic, and human-in-the-loop checkpoints should be explicit and configurable, not hidden in prompts.
+Submission underwriting intake is the highest-frequency operational bottleneck:
 
-## Product Goal
+- inbound applications arrive via unstructured email and attachments,
+- key fields are incomplete or inconsistent,
+- teams spend time chasing brokers for missing data,
+- underwriters lose cycle time before actual risk judgment starts.
 
-Create a tangible, measurable platform where teams can launch and maintain insurance workflows faster, with better quality and lower operational cost.
+By solving intake first, we can prove tangible ROI quickly while building platform primitives that generalize later.
 
-A successful product state means:
+## Wedge Outcome (What Success Looks Like)
 
-- Teams can assemble a new process in hours, not months.
-- Agents are reusable across multiple lines of business.
-- Process logic is visible, auditable, and versioned.
-- Data source connections are standardized.
-- Human review is inserted where confidence is low or regulation requires it.
+A carrier or MGA can run an intake flow that:
+
+1. captures broker submissions from shared inboxes,
+2. normalizes and extracts submission data,
+3. flags missing or conflicting evidence,
+4. drafts and sends targeted follow-up requests,
+5. assembles a decision-ready packet for underwriter handoff.
 
 ## Why This Is Useful
 
-Insurance operations are fragmented across systems, documents, and manual handoffs. Most organizations face the same issues:
+### For underwriting teams
+- faster triage and cleaner submission packets,
+- fewer repetitive follow-up emails,
+- clearer confidence and evidence trails.
 
-- high document volume and unstructured intake,
-- repetitive decision tasks with inconsistent quality,
-- slow handoffs between teams,
-- expensive custom integrations per workflow,
-- poor transparency into why a process succeeded or failed.
+### For operations leaders
+- lower intake operating cost,
+- measurable cycle-time improvements,
+- standardized workflows across teams.
 
-Agentic Insurance OS addresses this by combining:
+### For platform strategy
+- builds the control plane foundation for future claims, servicing, and distribution workflows,
+- creates reusable connectors and module standards,
+- opens a path from product wedge to platform moat.
 
-- a domain marketplace (what can be done),
-- a process builder (how tasks are orchestrated),
-- connectors (where data comes from and goes),
-- process library and versioning (how workflows evolve safely).
+## Frontend MVP Scope (Current Repository)
 
-## Example Outcome
+This repo currently contains the **frontend MVP** with mocked data and local browser persistence.
 
-Broker intake flow:
+### Included now
+- `/marketplace` -> Intake Modules catalog + ROI panel
+- `/builder` -> Underwriting Intake Builder + queue, detail drawer, follow-up generator, packet and audit panel
+- `/process-library` -> Saved intake playbooks grouped by intake stage
 
-1. Gmail Subscription Agent detects new applications.
-2. Ingestion Agent extracts and classifies information.
-3. Validation Decision checks completeness and consistency.
-4. If incomplete, Broker Feedback Agent requests missing data and loops back.
-5. If complete, Coverage or Underwriting Agent continues to quote path.
-
-This turns a manual email-driven workflow into an explicit, reusable, and improvable process.
-
-## Who This Serves
-
-- Carriers modernizing underwriting and claims operations.
-- MGAs scaling specialty workflows without large ops headcount.
-- Brokers and distribution teams accelerating quote turnaround.
-- Insurtech builders publishing vertical agents into a marketplace.
-- Internal innovation teams standardizing agent orchestration patterns.
-
-## Product Surfaces
-
-- Marketplace
-Discover agents by capability, value chain, and readiness status.
-
-- Process Builder
-Compose workflows with agents, connectors, and logic nodes.
-
-- Process Library
-Store, version, and reopen flows grouped by insurance domain.
-
-- Node Configuration
-Define per-node metadata, tags, routing labels, and process context.
-
-## Current Scope (Frontend MVP)
-
-This repository currently contains the frontend MVP with mocked data and local persistence:
-
-- `/marketplace`
-- `/builder`
-- `/process-library`
-
-Included today:
-
-- agent catalog,
-- connector catalog,
-- logic nodes,
+### Included interactions
 - drag-and-drop flow composition,
-- local save/load in browser storage.
+- logic branching and loop design,
+- local save/load versioned playbooks,
+- mock submission queue operations,
+- mock audit timeline and packet generation surfaces.
 
-Not included yet:
+### Not included yet
+- backend execution runtime,
+- tenant auth and organization boundaries,
+- connector credential vault and token lifecycle,
+- production messaging/integration workflows,
+- policy governance and compliance enforcement.
 
-- backend orchestration runtime,
-- auth and tenant isolation,
-- execution logs and observability,
-- production connector auth flows,
-- policy and compliance controls.
+## Product Narrative
 
-## Roadmap Direction
+### Today
+Submission Underwriting Intake OS.
 
-1. Platform foundation
-API, auth, organizations, workspace and process persistence.
+### Next
+Governed agent execution + connector SDK.
 
-2. Runtime and execution
-Background orchestration, retries, queueing, human tasks, and audit trails.
-
-3. Connector framework
-Secure credentials, connector SDK, and deployment-safe integration lifecycle.
-
-4. Agent lifecycle
-Publishing standards, testing harnesses, quality gates, and version compatibility.
-
-5. Governance
-Policy controls, approval workflows, explainability artifacts, and compliance reporting.
+### Later
+Full GenTech Insurance OS across broader insurance value chains.
 
 ## Design Principles
 
-- Domain-first: Insurance workflows and terminology are first-class.
-- Explicit over implicit: Routing and decisions are visible in the graph.
-- Composable architecture: Agents and connectors are reusable building blocks.
-- Human + AI collaboration: Human checkpoints are native, not bolted on.
-- Operational rigor: Versioning, auditability, and reliability are required, not optional.
+- **Wedge-first**: solve one painful workflow deeply before expanding horizontally.
+- **Explicit flows**: routing and control logic must be visible, editable, and versioned.
+- **Source-grounded outputs**: extracted data should trace back to evidence.
+- **Governed automation**: human checkpoints and operational controls are first-class.
+- **Composable systems**: modules and connectors should be reusable across workflows.
 
 ## Local Development
 

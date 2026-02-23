@@ -6,6 +6,15 @@ import { valueChainAccent, valueChainOrder } from "@/lib/mock-data";
 import { listStoredProcesses, removeStoredProcessById } from "@/lib/storage";
 import type { StoredProcess, ValueChain } from "@/lib/types";
 
+const stageNarrative: Record<ValueChain, string> = {
+  "Inbox Intake": "Entry-point processes for inbound broker communication.",
+  "Document Parsing": "Workflows that normalize and classify submission artifacts.",
+  "Submission Structuring": "Templates that shape extracted data into canonical submission objects.",
+  Validation: "Checks for completeness, confidence, and appetite alignment.",
+  "Broker Follow-Up": "Operational loops to request and chase missing submission data.",
+  "Underwriter Handoff": "Decision-ready packaging and routing into underwriting queues."
+};
+
 function formatUpdatedAt(isoDate: string) {
   return new Date(isoDate).toLocaleString();
 }
@@ -31,7 +40,6 @@ export function ProcessLibraryView() {
     processes.forEach((process) => {
       const existing = map.get(process.valueChain);
       if (!existing) {
-        map.set(process.valueChain, [process]);
         return;
       }
       existing.push(process);
@@ -46,25 +54,28 @@ export function ProcessLibraryView() {
       (sum, process) => sum + process.edgeCount,
       0
     );
+    const followUpHeavy = processes.filter((process) => process.edgeCount >= 5).length;
 
     return {
       processCount: processes.length,
       totalNodes,
-      totalConnections
+      totalConnections,
+      followUpHeavy
     };
   }, [processes]);
 
   return (
     <main className="page-shell">
       <section className="library-hero card-surface">
-        <p className="page-eyebrow">Process Library</p>
-        <h1 className="page-title">Saved flows grouped by insurance value chain.</h1>
+        <p className="page-eyebrow">Playbook Library</p>
+        <h1 className="page-title">Saved intake playbooks grouped by underwriting stage.</h1>
         <p className="page-copy">
-          Stored locally for now. Open any process in the builder to continue editing.
+          Versioned process templates for submission intake. Open any playbook in the
+          Intake Builder to continue iterating.
         </p>
         <div className="hero-actions">
           <Link href="/builder" className="btn btn--primary">
-            New Process
+            New Intake Playbook
           </Link>
           <button type="button" className="btn btn--ghost" onClick={loadProcesses}>
             Refresh
@@ -73,25 +84,29 @@ export function ProcessLibraryView() {
         <div className="hero-kpis">
           <div className="hero-kpi">
             <span className="hero-kpi__value">{libraryStats.processCount}</span>
-            <span className="hero-kpi__label">Saved processes</span>
+            <span className="hero-kpi__label">Saved playbooks</span>
           </div>
           <div className="hero-kpi">
             <span className="hero-kpi__value">{libraryStats.totalNodes}</span>
-            <span className="hero-kpi__label">Total nodes</span>
+            <span className="hero-kpi__label">Total modules</span>
+          </div>
+          <div className="hero-kpi">
+            <span className="hero-kpi__value">{libraryStats.followUpHeavy}</span>
+            <span className="hero-kpi__label">Loop-heavy templates</span>
           </div>
           <div className="hero-kpi">
             <span className="hero-kpi__value">{libraryStats.totalConnections}</span>
-            <span className="hero-kpi__label">Total connections</span>
+            <span className="hero-kpi__label">Total transitions</span>
           </div>
         </div>
       </section>
 
       {processes.length === 0 ? (
         <section className="empty-state card-surface">
-          <h2>No saved processes yet</h2>
+          <h2>No intake playbooks saved yet</h2>
           <p>
-            Build your first flow in the Process Builder and click <strong>Save
-            Process</strong>.
+            Build your first underwriting intake flow in the Intake Builder and save it
+            as a reusable playbook.
           </p>
           <Link href="/builder" className="btn btn--primary">
             Go to Builder
@@ -109,8 +124,11 @@ export function ProcessLibraryView() {
           return (
             <section key={valueChain} className="library-group card-surface">
               <div className="library-group__header">
-                <h2>{valueChain}</h2>
-                <span>{items.length} process(es)</span>
+                <div>
+                  <h2>{valueChain}</h2>
+                  <p className="library-group__copy">{stageNarrative[valueChain]}</p>
+                </div>
+                <span>{items.length} playbook(s)</span>
               </div>
 
               <div className="library-cards">
@@ -126,16 +144,13 @@ export function ProcessLibraryView() {
                   >
                     <h3>{process.name}</h3>
                     <p>
-                      v{process.version} | {process.nodeCount} nodes | {process.edgeCount}{" "}
-                      connections
+                      v{process.version} | {process.nodeCount} modules | {process.edgeCount}{" "}
+                      transitions
                     </p>
                     <p>Updated: {formatUpdatedAt(process.updatedAt)}</p>
 
                     <div className="library-card__actions">
-                      <Link
-                        href={`/builder?id=${process.id}`}
-                        className="btn btn--primary"
-                      >
+                      <Link href={`/builder?id=${process.id}`} className="btn btn--primary">
                         Open in Builder
                       </Link>
                       <button

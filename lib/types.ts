@@ -1,19 +1,20 @@
 export type ValueChain =
-  | "Sales"
-  | "Underwriting"
-  | "Claims"
-  | "Policy Admin"
-  | "Finance/Payments"
-  | "Compliance";
+  | "Inbox Intake"
+  | "Document Parsing"
+  | "Submission Structuring"
+  | "Validation"
+  | "Broker Follow-Up"
+  | "Underwriter Handoff";
 
-export type AgentStatus = "Mock" | "Beta" | "Verified";
+export type AgentStatus = "Design" | "Pilot" | "Production";
 
 export type ConnectorType =
   | "Email"
   | "Storage"
   | "API"
   | "Database"
-  | "Core System";
+  | "Core System"
+  | "Workflow";
 
 export type AgentCatalogItem = {
   id: string;

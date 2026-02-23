@@ -16,7 +16,13 @@ type ValueChainFilter = ValueChain | "All";
 type StatusFilter = AgentStatus | "All";
 
 const valueChainFilters: ValueChainFilter[] = ["All", ...valueChainOrder];
-const statusFilters: StatusFilter[] = ["All", "Mock", "Beta", "Verified"];
+const statusFilters: StatusFilter[] = ["All", "Design", "Pilot", "Production"];
+
+const roiBenchmarks = [
+  { label: "Intake triage time", value: "-62%" },
+  { label: "Missing-info cycle", value: "1.8d -> 6h" },
+  { label: "Submission handoff SLA", value: "< 2h" }
+];
 
 export function MarketplaceView() {
   const router = useRouter();
@@ -56,49 +62,50 @@ export function MarketplaceView() {
 
   const marketplaceStats = useMemo(() => {
     const totalAgents = agentCatalog.length;
-    const verifiedAgents = agentCatalog.filter(
-      (agent) => agent.status === "Verified"
+    const productionAgents = agentCatalog.filter(
+      (agent) => agent.status === "Production"
     ).length;
-    const chainCoverage = new Set(agentCatalog.flatMap((agent) => agent.valueChains))
+    const stageCoverage = new Set(agentCatalog.flatMap((agent) => agent.valueChains))
       .size;
 
-    return { totalAgents, verifiedAgents, chainCoverage };
+    return { totalAgents, productionAgents, stageCoverage };
   }, []);
 
   const handleAddToBuilder = (agent: AgentCatalogItem) => {
     queueMarketplaceAgent(agent.id);
-    setNotice(`Queued \"${agent.name}\" for the Process Builder.`);
+    setNotice(`Queued "${agent.name}" for the intake builder canvas.`);
   };
 
   return (
     <main className="page-shell">
       <section className="market-hero card-surface">
-        <p className="page-eyebrow">Agent Marketplace</p>
-        <h1 className="page-title">Insurance worker catalog for your value chain.</h1>
+        <p className="page-eyebrow">GenTech Insurance OS</p>
+        <h1 className="page-title">Submission Intake Modules for Underwriting Teams.</h1>
         <p className="page-copy">
-          Browse specialized agents, wire them to data sources, then orchestrate them
-          in process flows for Sales, Underwriting, Claims, and more.
+          Start with the underwriting intake wedge: capture broker email submissions,
+          normalize documents, close missing-information loops, and hand over
+          decision-ready packets to underwriters.
         </p>
         <div className="hero-actions">
           <Link href="/builder" className="btn btn--primary">
-            Open Builder
+            Open Intake Builder
           </Link>
           <Link href="/process-library" className="btn btn--ghost">
-            Process Library
+            View Playbooks
           </Link>
         </div>
         <div className="hero-kpis">
           <div className="hero-kpi">
             <span className="hero-kpi__value">{marketplaceStats.totalAgents}</span>
-            <span className="hero-kpi__label">Agents in catalog</span>
+            <span className="hero-kpi__label">Intake modules</span>
           </div>
           <div className="hero-kpi">
-            <span className="hero-kpi__value">{marketplaceStats.verifiedAgents}</span>
-            <span className="hero-kpi__label">Verified workers</span>
+            <span className="hero-kpi__value">{marketplaceStats.productionAgents}</span>
+            <span className="hero-kpi__label">Production-ready</span>
           </div>
           <div className="hero-kpi">
-            <span className="hero-kpi__value">{marketplaceStats.chainCoverage}</span>
-            <span className="hero-kpi__label">Value chains covered</span>
+            <span className="hero-kpi__value">{marketplaceStats.stageCoverage}</span>
+            <span className="hero-kpi__label">Intake stages covered</span>
           </div>
         </div>
       </section>
@@ -111,8 +118,8 @@ export function MarketplaceView() {
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               className="text-input"
-              placeholder="Search agents or capabilities"
-              aria-label="Search agents"
+              placeholder="Search modules, capabilities, or stages"
+              aria-label="Search modules"
             />
           </div>
 
@@ -145,7 +152,7 @@ export function MarketplaceView() {
           {notice ? <p className="inline-notice">{notice}</p> : null}
 
           <p className="results-line">
-            Showing {filteredAgents.length} of {agentCatalog.length} agent cards
+            Showing {filteredAgents.length} of {agentCatalog.length} module cards
           </p>
 
           <div className="agent-grid">
@@ -160,7 +167,9 @@ export function MarketplaceView() {
                 }
               >
                 <div className="agent-card__meta">
-                  <span className={`status-tag status-tag--${agent.status.toLowerCase()}`}>
+                  <span
+                    className={`status-tag status-tag--${agent.status.toLowerCase()}`}
+                  >
                     {agent.status}
                   </span>
                 </div>
@@ -215,19 +224,29 @@ export function MarketplaceView() {
 
           {filteredAgents.length === 0 ? (
             <section className="empty-search card-surface">
-              <h2>No agents match this filter</h2>
-              <p>Try widening value-chain or status filters to explore more workers.</p>
+              <h2>No modules match this filter</h2>
+              <p>Try widening stage or status filters to explore more options.</p>
             </section>
           ) : null}
         </div>
 
         <aside className="market-side card-surface">
-          <h2 className="side-title">Connectors</h2>
+          <h2 className="side-title">ROI control panel</h2>
           <p className="side-copy">
-            Connect each worker to platforms like Gmail, S3, APIs, policy core, and
-            payment rails.
+            Keep the wedge measurable: submission intake is the first operating layer of
+            the broader GenTech Insurance OS vision.
           </p>
 
+          <div className="roi-grid">
+            {roiBenchmarks.map((benchmark) => (
+              <div key={benchmark.label} className="roi-item">
+                <p className="roi-item__value">{benchmark.value}</p>
+                <p className="roi-item__label">{benchmark.label}</p>
+              </div>
+            ))}
+          </div>
+
+          <h3 className="side-subtitle">Connector readiness</h3>
           <div className="connector-list">
             {connectorCatalog.slice(0, 8).map((connector) => (
               <div key={connector.id} className="connector-item">
@@ -242,7 +261,7 @@ export function MarketplaceView() {
             className="btn btn--primary btn--block"
             onClick={() => router.push("/builder")}
           >
-            Build Broker Flow
+            Launch Intake Blueprint
           </button>
         </aside>
       </section>

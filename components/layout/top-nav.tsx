@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/marketplace", label: "Marketplace" },
-  { href: "/builder", label: "Builder" },
-  { href: "/process-library", label: "Process Library" }
+  { href: "/marketplace", label: "Intake Modules" },
+  { href: "/builder", label: "Intake Builder" },
+  { href: "/process-library", label: "Playbook Library" }
 ];
 
 export function TopNav() {
@@ -16,10 +16,12 @@ export function TopNav() {
     <header className="top-nav">
       <div className="top-nav__inner">
         <Link href="/marketplace" className="top-nav__brand">
-          <span className="top-nav__brand-mark">AI</span>
+          <span className="top-nav__brand-mark">GT</span>
           <span className="top-nav__brand-copy">
-            <span className="top-nav__brand-title">Agentic Insurance OS</span>
-            <span className="top-nav__brand-subtitle">Marketplace + Process Studio</span>
+            <span className="top-nav__brand-title">GenTech Insurance OS</span>
+            <span className="top-nav__brand-subtitle">
+              Submission Underwriting Intake OS
+            </span>
           </span>
         </Link>
 

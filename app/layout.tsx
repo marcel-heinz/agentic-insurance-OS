@@ -4,8 +4,9 @@ import "@xyflow/react/dist/style.css";
 import { TopNav } from "@/components/layout/top-nav";
 
 export const metadata: Metadata = {
-  title: "Agentic Insurance OS",
-  description: "Marketplace and process builder for insurance agents"
+  title: "GenTech Insurance OS",
+  description:
+    "Submission underwriting intake workspace for GenTech Insurance OS"
 };
 
 export default function RootLayout({

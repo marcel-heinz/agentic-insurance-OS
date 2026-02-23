@@ -6,121 +6,121 @@ import type {
 } from "@/lib/types";
 
 export const valueChainOrder: ValueChain[] = [
-  "Sales",
-  "Underwriting",
-  "Claims",
-  "Policy Admin",
-  "Finance/Payments",
-  "Compliance"
+  "Inbox Intake",
+  "Document Parsing",
+  "Submission Structuring",
+  "Validation",
+  "Broker Follow-Up",
+  "Underwriter Handoff"
 ];
 
 export const valueChainAccent: Record<ValueChain, string> = {
-  Sales: "#2A7A9E",
-  Underwriting: "#7056A6",
-  Claims: "#B05A31",
-  "Policy Admin": "#2B8F6E",
-  "Finance/Payments": "#8C4F9D",
-  Compliance: "#6D7788"
+  "Inbox Intake": "#3D6B8A",
+  "Document Parsing": "#3B8C7A",
+  "Submission Structuring": "#2E7CA0",
+  Validation: "#A26C39",
+  "Broker Follow-Up": "#7F5D9A",
+  "Underwriter Handoff": "#244D6E"
 };
 
 export const agentCatalog: AgentCatalogItem[] = [
   {
-    id: "gmail-subscription-agent",
-    name: "Gmail Subscription Agent",
-    summary: "Monitors broker inboxes and creates policy-application events.",
-    valueChains: ["Sales"],
+    id: "email-intake-listener",
+    name: "Email Intake Listener",
+    summary: "Monitors broker inboxes and opens a submission case with thread context.",
+    valueChains: ["Inbox Intake"],
     capabilities: [
       "Mailbox watch",
-      "Attachment detection",
-      "Policy-intake eventing"
+      "Broker thread detection",
+      "Submission case creation"
     ],
-    requiredConnectors: ["gmail", "webhook-api"],
-    outputs: ["Application event", "Document links"],
-    status: "Beta"
+    requiredConnectors: ["gmail", "outlook", "workflow-queue"],
+    outputs: ["Intake case", "Document pointers", "SLA timestamp"],
+    status: "Production"
   },
   {
-    id: "ingestion-agent",
-    name: "Ingestion Agent",
-    summary: "Runs OCR, classification, and key-value extraction on submissions.",
-    valueChains: ["Sales", "Underwriting"],
-    capabilities: ["OCR", "Document classification", "Tax data extraction"],
-    requiredConnectors: ["s3-bucket", "webhook-api"],
-    outputs: ["Normalized submission JSON"],
-    status: "Verified"
+    id: "attachment-normalizer",
+    name: "Attachment Normalizer",
+    summary: "Converts inbound PDFs, spreadsheets, and scans into normalized document bundles.",
+    valueChains: ["Document Parsing"],
+    capabilities: ["File normalization", "Versioning", "Attachment indexing"],
+    requiredConnectors: ["s3-bucket", "sharepoint", "workflow-queue"],
+    outputs: ["Normalized files", "Document inventory"],
+    status: "Production"
   },
   {
-    id: "application-truth-check-agent",
-    name: "Application Truth Check Agent",
-    summary: "Validates consistency and flags missing evidence before underwriting.",
-    valueChains: ["Underwriting", "Compliance"],
-    capabilities: ["Cross-field checks", "Rule validation", "Fraud signals"],
-    requiredConnectors: ["policy-core", "risk-db"],
-    outputs: ["Validation report", "Decision hints"],
-    status: "Mock"
-  },
-  {
-    id: "broker-feedback-agent",
-    name: "Broker Feedback Agent",
-    summary: "Sends structured requests back to brokers for missing information.",
-    valueChains: ["Sales"],
-    capabilities: ["Email drafting", "Task generation", "SLA tracking"],
-    requiredConnectors: ["gmail", "webhook-api"],
-    outputs: ["Feedback thread", "Resubmission task"],
-    status: "Beta"
-  },
-  {
-    id: "coverage-check-agent",
-    name: "Coverage Check Agent",
-    summary: "Matches requests to product rules and coverage eligibility constraints.",
-    valueChains: ["Underwriting", "Compliance"],
+    id: "submission-extractor",
+    name: "Submission Extractor",
+    summary: "Extracts ACORD and supplemental fields into a structured submission object.",
+    valueChains: ["Submission Structuring"],
     capabilities: [
-      "Coverage mapping",
-      "Exclusion checks",
-      "Policy fit scoring"
+      "OCR",
+      "Table extraction",
+      "Canonical submission graph mapping"
     ],
-    requiredConnectors: ["policy-core", "product-rules-api"],
-    outputs: ["Coverage recommendation"],
-    status: "Verified"
+    requiredConnectors: ["s3-bucket", "acord-parser-api", "webhook-api"],
+    outputs: ["Submission JSON", "Field confidence map"],
+    status: "Pilot"
   },
   {
-    id: "underwriting-agent",
-    name: "Underwriting Agent",
-    summary: "Packages risk context and produces quote recommendations.",
-    valueChains: ["Underwriting", "Sales"],
-    capabilities: ["Risk synthesis", "Pricing hints", "Quote packet generation"],
-    requiredConnectors: ["policy-core", "risk-db", "snowflake"],
-    outputs: ["Quote proposal", "Risk summary"],
-    status: "Mock"
+    id: "risk-enrichment-worker",
+    name: "Risk Enrichment Worker",
+    summary: "Adds third-party firmographics and risk context before triage.",
+    valueChains: ["Submission Structuring", "Validation"],
+    capabilities: ["Registry lookup", "Address enrichment", "Entity matching"],
+    requiredConnectors: ["company-registry-api", "loss-run-db"],
+    outputs: ["Enrichment profile", "Risk hints"],
+    status: "Pilot"
   },
   {
-    id: "claim-settlement-agent",
-    name: "Claim Settlement Agent",
-    summary: "Coordinates claim resolution flow and settlement recommendations.",
-    valueChains: ["Claims"],
-    capabilities: ["Liability assessment", "Reserve suggestions", "Settlement path"],
-    requiredConnectors: ["claims-db", "policy-core"],
-    outputs: ["Settlement package"],
-    status: "Beta"
+    id: "completeness-checker",
+    name: "Completeness Checker",
+    summary: "Validates required fields and flags missing or conflicting evidence.",
+    valueChains: ["Validation"],
+    capabilities: ["Required-field checks", "Consistency tests", "Confidence gating"],
+    requiredConnectors: ["rules-engine-api", "ams-api"],
+    outputs: ["Completeness score", "Missing info checklist"],
+    status: "Production"
   },
   {
-    id: "payment-orchestration-agent",
-    name: "Payment Orchestration Agent",
-    summary: "Triggers payouts and reconciles payment events back into claims.",
-    valueChains: ["Claims", "Finance/Payments"],
-    capabilities: ["Payout orchestration", "Ledger updates", "Payment retries"],
-    requiredConnectors: ["stripe", "erp-api"],
-    outputs: ["Payment event", "Reconciliation status"],
-    status: "Verified"
+    id: "broker-loop-agent",
+    name: "Broker Loop Agent",
+    summary: "Drafts targeted broker follow-ups and tracks outstanding requirements.",
+    valueChains: ["Broker Follow-Up"],
+    capabilities: ["Email drafting", "Follow-up reminders", "SLA tracking"],
+    requiredConnectors: ["gmail", "outlook", "workflow-queue"],
+    outputs: ["Follow-up draft", "Open requirement list"],
+    status: "Pilot"
   },
   {
-    id: "policy-issuance-agent",
-    name: "Policy Issuance Agent",
-    summary: "Generates policy artifacts and pushes records to policy admin.",
-    valueChains: ["Policy Admin", "Sales"],
-    capabilities: ["Document generation", "Policy numbering", "Activation checks"],
-    requiredConnectors: ["policy-core", "s3-bucket"],
-    outputs: ["Issued policy docs"],
-    status: "Mock"
+    id: "appetite-precheck-agent",
+    name: "Appetite Pre-Check Agent",
+    summary: "Runs appetite and eligibility checks before underwriter review.",
+    valueChains: ["Validation", "Underwriter Handoff"],
+    capabilities: ["Appetite fit", "Rule lookups", "Decline routing"],
+    requiredConnectors: ["rules-engine-api", "ams-api"],
+    outputs: ["Appetite decision", "Referral recommendation"],
+    status: "Production"
+  },
+  {
+    id: "underwriter-packet-assembler",
+    name: "Underwriter Packet Assembler",
+    summary: "Builds a decision-ready packet with summary, flags, and source evidence links.",
+    valueChains: ["Underwriter Handoff"],
+    capabilities: ["Packet generation", "Risk summary", "Evidence linking"],
+    requiredConnectors: ["underwriter-workbench-api", "s3-bucket"],
+    outputs: ["Underwriter packet", "Referral brief"],
+    status: "Pilot"
+  },
+  {
+    id: "referral-routing-agent",
+    name: "Referral Routing Agent",
+    summary: "Routes complex or low-confidence submissions to the right underwriting queue.",
+    valueChains: ["Underwriter Handoff"],
+    capabilities: ["Queue routing", "Skill-based assignment", "Priority scoring"],
+    requiredConnectors: ["workflow-queue", "underwriter-workbench-api"],
+    outputs: ["Queue assignment", "Escalation reason"],
+    status: "Design"
   }
 ];
 
@@ -132,84 +132,102 @@ export const connectorCatalog: ConnectorCatalogItem[] = [
     summary: "Read and send broker communication threads."
   },
   {
+    id: "outlook",
+    name: "Microsoft Outlook",
+    type: "Email",
+    summary: "Ingest shared underwriting mailboxes and deliver follow-up drafts."
+  },
+  {
+    id: "sharepoint",
+    name: "SharePoint",
+    type: "Storage",
+    summary: "Store broker packets and intake artifacts with version history."
+  },
+  {
     id: "s3-bucket",
     name: "S3 Bucket",
     type: "Storage",
-    summary: "Store raw and processed documents."
+    summary: "Persist raw and normalized submission documents."
   },
   {
-    id: "snowflake",
-    name: "Snowflake",
-    type: "Database",
-    summary: "Query actuarial and historical policy datasets."
+    id: "acord-parser-api",
+    name: "ACORD Parser API",
+    type: "API",
+    summary: "Parse and map standard insurance application fields."
   },
   {
-    id: "claims-db",
-    name: "Claims DB",
-    type: "Database",
-    summary: "Access active claim records and case status."
-  },
-  {
-    id: "policy-core",
-    name: "Policy Core",
+    id: "ams-api",
+    name: "Agency Management API",
     type: "Core System",
-    summary: "Policy administration API and contract source of truth."
+    summary: "Check account history, prior submissions, and broker metadata."
+  },
+  {
+    id: "rules-engine-api",
+    name: "Rules Engine API",
+    type: "API",
+    summary: "Evaluate appetite and required-data policies per line of business."
+  },
+  {
+    id: "loss-run-db",
+    name: "Loss Run Database",
+    type: "Database",
+    summary: "Lookup historical claims patterns and severity signals."
+  },
+  {
+    id: "company-registry-api",
+    name: "Company Registry API",
+    type: "API",
+    summary: "Enrich legal entity and business profile information."
+  },
+  {
+    id: "workflow-queue",
+    name: "Workflow Queue",
+    type: "Workflow",
+    summary: "Track submission states and task ownership across teams."
+  },
+  {
+    id: "underwriter-workbench-api",
+    name: "Underwriter Workbench API",
+    type: "Core System",
+    summary: "Publish decision-ready packets into underwriter work queues."
   },
   {
     id: "webhook-api",
     name: "Webhook API",
     type: "API",
-    summary: "Push events into internal orchestration systems."
-  },
-  {
-    id: "stripe",
-    name: "Stripe",
-    type: "API",
-    summary: "Issue and reconcile claim-related payments."
-  },
-  {
-    id: "erp-api",
-    name: "ERP API",
-    type: "API",
-    summary: "Send accounting entries into finance systems."
-  },
-  {
-    id: "product-rules-api",
-    name: "Product Rules API",
-    type: "API",
-    summary: "Resolve eligibility and limit rules per line of business."
-  },
-  {
-    id: "risk-db",
-    name: "Risk DB",
-    type: "Database",
-    summary: "Fraud signals and historical risk patterns."
+    summary: "Send downstream events for orchestration and analytics."
   }
 ];
 
 export const logicCatalog: LogicCatalogItem[] = [
   {
-    id: "decision-table",
-    name: "Decision Table",
-    summary: "Route based on deterministic conditions.",
-    branchLabels: ["Pass", "Needs Info", "Reject"]
+    id: "completeness-gate",
+    name: "Completeness Gate",
+    summary: "Route based on required-field completeness by product.",
+    branchLabels: ["Complete", "Missing Info", "Conflicting Data"]
   },
   {
-    id: "dynamic-router",
-    name: "Dynamic Router",
-    summary: "LLM-assisted selection of the next best agent.",
-    branchLabels: ["Primary Path", "Escalate", "Fallback"]
+    id: "confidence-threshold",
+    name: "Confidence Threshold",
+    summary: "Escalate low-confidence extractions for manual confirmation.",
+    branchLabels: ["Auto-accept", "Review", "Reject"]
+  },
+  {
+    id: "broker-loop-router",
+    name: "Broker Loop Router",
+    summary: "Determine follow-up cadence and reminder sequence.",
+    branchLabels: ["Send Follow-Up", "Wait", "Escalate Broker"]
+  },
+  {
+    id: "appetite-router",
+    name: "Appetite Router",
+    summary: "Direct submissions to quote path, referral, or decline path.",
+    branchLabels: ["Quote", "Refer", "Decline"]
   },
   {
     id: "human-review",
     name: "Human Review",
-    summary: "Pause automation and hand over to an operator.",
-    branchLabels: ["Approved", "Rework"]
-  },
-  {
-    id: "wait-timer",
-    name: "Wait / SLA Timer",
-    summary: "Add delay windows and timeout branches.",
-    branchLabels: ["Timeout", "Continue"]
+    summary: "Pause execution and hand over to underwriting operations.",
+    branchLabels: ["Approved", "Rework", "Closed"]
   }
 ];
