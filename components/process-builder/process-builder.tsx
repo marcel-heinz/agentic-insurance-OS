@@ -318,15 +318,15 @@ function BuilderWorkbench() {
     const queuedAgents = consumeMarketplaceAgentQueue();
     if (queuedAgents.length > 0) {
       setNodes((currentNodes) => {
-        const additions: ProcessFlowNode[] = queuedAgents
-          .map((queuedId, index) => {
+        const additions = queuedAgents.reduce<ProcessFlowNode[]>(
+          (acc, queuedId, index) => {
             const template = agentTemplateById.get(queuedId);
             if (!template) {
-              return null;
+              return acc;
             }
 
             const id = `node-${nodeId.current++}`;
-            return {
+            const queuedNode: ProcessFlowNode = {
               id,
               type: "process",
               position: { x: 180 + index * 260, y: 460 },
@@ -340,8 +340,12 @@ function BuilderWorkbench() {
                 branchLabels: template.branchLabels
               }
             };
-          })
-          .filter((node): node is ProcessFlowNode => node !== null);
+
+            acc.push(queuedNode);
+            return acc;
+          },
+          []
+        );
 
         const merged = [...currentNodes, ...additions];
         nodeId.current = nextNodeCounter(merged);
